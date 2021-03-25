@@ -34,7 +34,8 @@ public class StringMapper {
 
     /**
      * @param type to get object from
-     * @return converted object - or request string if not supported
+     * @return converted object
+     * @throws IllegalArgumentException if class not supported
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
      * @see #mapPrimitive(String, Class)
      */
@@ -50,7 +51,7 @@ public class StringMapper {
 
     /**
      * @param type to get object from
-     * @return converted object - or request string if not supported
+     * @return converted object - or {@code null} if not supported
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
      */
     protected Object mapPrimitive(String string, Class<?> type) {
