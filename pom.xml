@@ -5,7 +5,7 @@
 
     <groupId>io.rala</groupId>
     <artifactId>string-mapper</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <packaging>jar</packaging>
     <name>string-mapper.jar</name>
@@ -34,10 +34,10 @@
         </developer>
     </developers>
 
-    <!--<scm>
+    <scm>
         <connection>git://github.com/rala72/string-mapper.git</connection>
         <url>http://github.com/rala72/string-mapper</url>
-    </scm>-->
+    </scm>
 
     <dependencies>
         <dependency>
