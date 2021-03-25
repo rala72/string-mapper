@@ -36,7 +36,8 @@ public class StringMapper {
      * if multiple mapper apply to a specific class (without a own mapper)
      * it is undefined which one is chosen
      *
-     * @param type to get object from
+     * @param string string to map
+     * @param type   to get object from
      * @return converted object
      * @throws IllegalArgumentException if class not supported
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
@@ -60,7 +61,8 @@ public class StringMapper {
     }
 
     /**
-     * @param type to get object from
+     * @param string string to map
+     * @param type   to get object from
      * @return converted object - or {@code null} if not supported
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
      */
