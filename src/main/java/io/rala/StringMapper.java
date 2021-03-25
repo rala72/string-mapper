@@ -47,8 +47,14 @@ public class StringMapper {
 
         Class<?> current = type;
         Function<String, Object> mapper;
-        do mapper = mapperMap.getOrDefault(current, null);
-        while (mapper == null && (current = current.getSuperclass()) != null);
+        do {
+            mapper = mapperMap.getOrDefault(current, null);
+            if (mapper != null) break;
+            for (Class<?> anInterface : current.getInterfaces()) {
+                mapper = mapperMap.getOrDefault(anInterface, null);
+                if (mapper != null) break;
+            }
+        } while (mapper == null && (current = current.getSuperclass()) != null);
         if (mapper != null) return mapper.apply(string);
         throw new IllegalArgumentException(type.getName());
     }

@@ -2,7 +2,9 @@ package io.rala;
 
 import io.rala.testUtils.arguments.ParameterArgumentsStreamFactory;
 import io.rala.testUtils.model.ChildTestClass;
+import io.rala.testUtils.model.InterfaceTestClass;
 import io.rala.testUtils.model.ParentTestClass;
+import io.rala.testUtils.model.TestInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -90,6 +92,37 @@ class StringMapperTest {
         map = stringMapper.map(s, ChildTestClass.class);
         assertNotEquals(ChildTestClass.class, map.getClass());
         assertEquals(new ChildTestClass(s), map);
+    }
+
+    @Test
+    void mapStringToClassWithInterfaceMapper() {
+        String s = "test";
+
+        stringMapper.addCustomMapper(InterfaceTestClass.class, InterfaceTestClass::new);
+
+        assertThrows(IllegalArgumentException.class,
+            () -> stringMapper.map(s, TestInterface.class)
+        );
+
+        Object map = stringMapper.map(s, InterfaceTestClass.class);
+        assertEquals(InterfaceTestClass.class, map.getClass());
+        assertEquals(new InterfaceTestClass(s), map);
+    }
+
+    @Test
+    void mapStringToInterfaceWithClassMapper() {
+        String s = "test";
+
+        stringMapper.addCustomMapper(TestInterface.class, InterfaceTestClass::new);
+
+        Object map;
+        map = stringMapper.map(s, InterfaceTestClass.class);
+        assertEquals(InterfaceTestClass.class, map.getClass());
+        assertEquals(new InterfaceTestClass(s), map);
+
+        map = stringMapper.map(s, TestInterface.class);
+        assertNotEquals(TestInterface.class, map.getClass());
+        assertEquals(new InterfaceTestClass(s), map);
     }
 
     @ParameterizedTest
