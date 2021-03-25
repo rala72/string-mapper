@@ -28,7 +28,7 @@ public class ParentTestClass {
 
     @Override
     public String toString() {
-        return "SuperClass{" +
+        return "ParentTestClass{" +
             "string='" + getString() + '\'' +
             '}';
     }
