@@ -69,11 +69,12 @@ class StringMapperTest {
 
         stringMapper.addCustomMapper(ChildTestClass.class, ChildTestClass::new);
 
-        assertThrows(IllegalArgumentException.class,
-            () -> stringMapper.map(s, ParentTestClass.class)
-        );
+        Object map;
+        map = stringMapper.map(s, ParentTestClass.class);
+        assertNotEquals(ParentTestClass.class, map.getClass());
+        assertEquals(new ParentTestClass(s), map);
 
-        Object map = stringMapper.map(s, ChildTestClass.class);
+        map = stringMapper.map(s, ChildTestClass.class);
         assertEquals(ChildTestClass.class, map.getClass());
         assertEquals(new ChildTestClass(s), map);
     }
@@ -84,14 +85,13 @@ class StringMapperTest {
 
         stringMapper.addCustomMapper(ParentTestClass.class, ParentTestClass::new);
 
-        Object map;
-        map = stringMapper.map(s, ParentTestClass.class);
+        Object map = stringMapper.map(s, ParentTestClass.class);
         assertEquals(ParentTestClass.class, map.getClass());
         assertEquals(new ParentTestClass(s), map);
 
-        map = stringMapper.map(s, ChildTestClass.class);
-        assertNotEquals(ChildTestClass.class, map.getClass());
-        assertEquals(new ChildTestClass(s), map);
+        assertThrows(IllegalArgumentException.class,
+            () -> stringMapper.map(s, ChildTestClass.class)
+        );
     }
 
     @Test
@@ -100,11 +100,12 @@ class StringMapperTest {
 
         stringMapper.addCustomMapper(InterfaceTestClass.class, InterfaceTestClass::new);
 
-        assertThrows(IllegalArgumentException.class,
-            () -> stringMapper.map(s, TestInterface.class)
-        );
+        Object map;
+        map = stringMapper.map(s, TestInterface.class);
+        assertNotEquals(TestInterface.class, map.getClass());
+        assertEquals(new InterfaceTestClass(s), map);
 
-        Object map = stringMapper.map(s, InterfaceTestClass.class);
+        map = stringMapper.map(s, InterfaceTestClass.class);
         assertEquals(InterfaceTestClass.class, map.getClass());
         assertEquals(new InterfaceTestClass(s), map);
     }
@@ -115,14 +116,13 @@ class StringMapperTest {
 
         stringMapper.addCustomMapper(TestInterface.class, InterfaceTestClass::new);
 
-        Object map;
-        map = stringMapper.map(s, InterfaceTestClass.class);
-        assertEquals(InterfaceTestClass.class, map.getClass());
-        assertEquals(new InterfaceTestClass(s), map);
-
-        map = stringMapper.map(s, TestInterface.class);
+        Object map = stringMapper.map(s, TestInterface.class);
         assertNotEquals(TestInterface.class, map.getClass());
         assertEquals(new InterfaceTestClass(s), map);
+
+        assertThrows(IllegalArgumentException.class,
+            () -> stringMapper.map(s, InterfaceTestClass.class)
+        );
     }
 
     @ParameterizedTest

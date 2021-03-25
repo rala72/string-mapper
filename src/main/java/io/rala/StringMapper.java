@@ -33,6 +33,9 @@ public class StringMapper {
     }
 
     /**
+     * if multiple mapper apply to a specific class (without a own mapper)
+     * it is undefined which one is chosen
+     *
      * @param type to get object from
      * @return converted object
      * @throws IllegalArgumentException if class not supported
@@ -45,17 +48,14 @@ public class StringMapper {
         Object o = mapPrimitive(string, type);
         if (o != null) return o;
 
-        Class<?> current = type;
-        Function<String, Object> mapper;
-        do {
-            mapper = mapperMap.getOrDefault(current, null);
-            if (mapper != null) break;
-            for (Class<?> anInterface : current.getInterfaces()) {
-                mapper = mapperMap.getOrDefault(anInterface, null);
-                if (mapper != null) break;
+        Function<String, ?> mapper = mapperMap.getOrDefault(type, null);
+        if (mapper == null)
+            for (Class<?> aClass : mapperMap.keySet()) {
+                if (!isSupported(type, aClass)) continue;
+                mapper = mapperMap.getOrDefault(aClass, null);
+                break;
             }
-        } while (mapper == null && (current = current.getSuperclass()) != null);
-        if (mapper != null) return mapper.apply(string);
+        if (mapper != null) return type.cast(mapper.apply(string));
         throw new IllegalArgumentException(type.getName());
     }
 
@@ -86,6 +86,17 @@ public class StringMapper {
         if (double.class.isAssignableFrom(type) || Double.class.isAssignableFrom(type))
             return Double.parseDouble(string);
         return null;
+    }
+
+    private boolean isSupported(Class<?> expected, Class<?> type) {
+        Class<?> current = type;
+        do {
+            if (expected.equals(current)) return true;
+            for (Class<?> anInterface : current.getInterfaces())
+                if (expected.equals(anInterface))
+                    return true;
+        } while ((current = current.getSuperclass()) != null);
+        return false;
     }
 
     /**
