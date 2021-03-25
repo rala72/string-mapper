@@ -43,9 +43,7 @@ public class StringMapper {
         Object o = mapPrimitive(string, type);
         if (o != null) return o;
         Function<String, Object> mapper = mapperMap.getOrDefault(type, null);
-        if (mapper != null) {
-            return mapper.apply(string);
-        }
+        if (mapper != null) return mapper.apply(string);
         throw new IllegalArgumentException(type.getName());
     }
 
@@ -55,35 +53,26 @@ public class StringMapper {
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
      */
     protected Object mapPrimitive(String string, Class<?> type) {
-        if (String.class.isAssignableFrom(type)) {
+        if (String.class.isAssignableFrom(type))
             return string;
-        }
-        if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type)) {
+        if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))
             return Boolean.parseBoolean(string);
-        }
-        if (byte.class.isAssignableFrom(type) || Byte.class.isAssignableFrom(type)) {
+        if (byte.class.isAssignableFrom(type) || Byte.class.isAssignableFrom(type))
             return Byte.parseByte(string);
-        }
-        if (char.class.isAssignableFrom(type) || Character.class.isAssignableFrom(type)) {
-            if (string.length() != 1)
-                throw new IllegalArgumentException("String is no character: " + string);
-            return string.charAt(0);
-        }
-        if (short.class.isAssignableFrom(type) || Short.class.isAssignableFrom(type)) {
+        if (char.class.isAssignableFrom(type) || Character.class.isAssignableFrom(type))
+            if (string.length() == 1)
+                return string.charAt(0);
+            else throw new IllegalArgumentException("String is no character: " + string);
+        if (short.class.isAssignableFrom(type) || Short.class.isAssignableFrom(type))
             return Short.parseShort(string);
-        }
-        if (int.class.isAssignableFrom(type) || Integer.class.isAssignableFrom(type)) {
+        if (int.class.isAssignableFrom(type) || Integer.class.isAssignableFrom(type))
             return Integer.parseInt(string);
-        }
-        if (long.class.isAssignableFrom(type) || Long.class.isAssignableFrom(type)) {
+        if (long.class.isAssignableFrom(type) || Long.class.isAssignableFrom(type))
             return Long.parseLong(string);
-        }
-        if (float.class.isAssignableFrom(type) || Float.class.isAssignableFrom(type)) {
+        if (float.class.isAssignableFrom(type) || Float.class.isAssignableFrom(type))
             return Float.parseFloat(string);
-        }
-        if (double.class.isAssignableFrom(type) || Double.class.isAssignableFrom(type)) {
+        if (double.class.isAssignableFrom(type) || Double.class.isAssignableFrom(type))
             return Double.parseDouble(string);
-        }
         return null;
     }
 }

@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.stream.Stream;
 
 class StringMapperTest {
-    StringMapper stringMapper;
+    private StringMapper stringMapper;
 
     @BeforeEach
     void setUp() {
