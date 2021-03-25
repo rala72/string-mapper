@@ -24,6 +24,8 @@ class StringMapperTest {
         stringMapper = new StringMapper();
     }
 
+    // region mapString basic and custom
+
     @Test
     void mapStringToNull() {
         String s = "null";
@@ -62,6 +64,10 @@ class StringMapperTest {
             () -> stringMapper.map(s, LocalDate.class)
         );
     }
+
+    // endregion
+
+    // region mapString parent/child
 
     @Test
     void mapStringToParentTestClassWithChildMapper() {
@@ -124,6 +130,8 @@ class StringMapperTest {
             () -> stringMapper.map(s, InterfaceTestClass.class)
         );
     }
+
+    // endregion
 
     @ParameterizedTest
     @MethodSource("getValidMappingArguments")
