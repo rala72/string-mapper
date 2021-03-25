@@ -1,0 +1,7 @@
+# Java - rala v181010
+
+# IntelliJ
+*.iml
+.idea/
+out/
+target/
