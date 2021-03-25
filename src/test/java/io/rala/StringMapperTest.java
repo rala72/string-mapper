@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.LocalDate;
 import java.util.stream.Stream;
 
 class StringMapperTest {
@@ -30,6 +31,30 @@ class StringMapperTest {
         String s = "string";
         Object map = stringMapper.map(s, String.class);
         Assertions.assertEquals(s, String.valueOf(map));
+    }
+
+    @Test
+    void mapStringToLocalDateWithoutMapper() {
+        String s = "2018-11-25";
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> stringMapper.map(s, LocalDate.class)
+        );
+    }
+
+    @Test
+    void mapStringToLocalDateWithMapper() {
+        String s = "2018-11-25";
+
+        stringMapper.addCustomMapper(LocalDate.class, LocalDate::parse);
+
+        Object map = stringMapper.map(s, LocalDate.class);
+        Assertions.assertEquals(LocalDate.of(2018, 11, 25), map);
+
+        stringMapper.removeCustomMapper(LocalDate.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> stringMapper.map(s, LocalDate.class)
+        );
     }
 
     @ParameterizedTest

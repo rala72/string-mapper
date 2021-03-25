@@ -1,9 +1,15 @@
 package io.rala;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
 /**
  * maps a string to an object based on specified class
  */
 public class StringMapper {
+    private final Map<Class<?>, Function<String, Object>> mapperMap = new HashMap<>();
+
     /**
      * creates basic {@link StringMapper}
      */
@@ -11,13 +17,47 @@ public class StringMapper {
     }
 
     /**
+     * @param type   type of mapper
+     * @param mapper custom mapper to consider
+     */
+    public void addCustomMapper(Class<?> type, Function<String, Object> mapper) {
+        mapperMap.put(type, mapper);
+    }
+
+    /**
+     * @param type type of mapper
+     */
+    public void removeCustomMapper(Class<?> type) {
+        mapperMap.remove(type);
+    }
+
+    /**
      * @param type to get object from
      * @return converted object - or request string if not supported
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
+     * @see #mapPrimitive(String, Class)
      */
     public Object map(String string, Class<?> type) {
         if (string == null) string = "null";
         if (!type.isPrimitive() && string.equals("null")) return null;
+        Object o = mapPrimitive(string, type);
+        if (o != null) return o;
+        Function<String, Object> mapper = mapperMap.getOrDefault(type, null);
+        if (mapper != null) {
+            return mapper.apply(string);
+        }
+        throw new IllegalArgumentException(type.getName());
+    }
+
+    /**
+     * @param type to get object from
+     * @return converted object - or request string if not supported
+     * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
+     */
+    protected Object mapPrimitive(String string, Class<?> type) {
+        if (String.class.isAssignableFrom(type)) {
+            return string;
+        }
         if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type)) {
             return Boolean.parseBoolean(string);
         }
@@ -44,6 +84,6 @@ public class StringMapper {
         if (double.class.isAssignableFrom(type) || Double.class.isAssignableFrom(type)) {
             return Double.parseDouble(string);
         }
-        return string;
+        return null;
     }
 }
