@@ -8,8 +8,21 @@ import java.util.function.Function;
  * maps a string to an object based on specified class
  */
 public class StringMapper {
+    private static final Map<Class<?>, Class<?>> WRAPPER_TYPE_MAP = new HashMap<>();
     private static StringMapper instance;
-    private final Map<Class<?>, Function<String, Object>> mapperMap = new HashMap<>();
+    private final Map<Class<?>, Function<String, ?>> mapperMap = new HashMap<>();
+
+    static {
+        WRAPPER_TYPE_MAP.put(boolean.class, Boolean.class);
+        WRAPPER_TYPE_MAP.put(byte.class, Byte.class);
+        WRAPPER_TYPE_MAP.put(char.class, Character.class);
+        WRAPPER_TYPE_MAP.put(short.class, Short.class);
+        WRAPPER_TYPE_MAP.put(int.class, Integer.class);
+        WRAPPER_TYPE_MAP.put(long.class, Long.class);
+        WRAPPER_TYPE_MAP.put(float.class, Float.class);
+        WRAPPER_TYPE_MAP.put(double.class, Double.class);
+        WRAPPER_TYPE_MAP.put(void.class, Void.class);
+    }
 
     /**
      * creates basic {@link StringMapper}
@@ -20,8 +33,10 @@ public class StringMapper {
     /**
      * @param type   type of mapper
      * @param mapper custom mapper to consider
+     * @param <T>    requested type
+     * @param <R>    result type (may be super class of {@code T})
      */
-    public void addCustomMapper(Class<?> type, Function<String, Object> mapper) {
+    public <T, R extends T> void addCustomMapper(Class<T> type, Function<String, R> mapper) {
         mapperMap.put(type, mapper);
     }
 
@@ -38,16 +53,18 @@ public class StringMapper {
      *
      * @param string string to map
      * @param type   to get object from
-     * @return converted object
+     * @param <T>    requested type
+     * @return converted object - always in object form
      * @throws IllegalArgumentException if class not supported
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
      * @see #mapPrimitive(String, Class)
+     * @see #getObjectInstance(Class)
      */
-    public Object map(String string, Class<?> type) {
+    public <T> T map(String string, Class<T> type) {
         if (string == null) string = "null";
         if (!type.isPrimitive() && string.equals("null")) return null;
-        Object o = mapPrimitive(string, type);
-        if (o != null) return o;
+        T t = mapPrimitive(string, type);
+        if (t != null) return t;
 
         Function<String, ?> mapper = mapperMap.getOrDefault(type, null);
         if (mapper == null)
@@ -63,31 +80,38 @@ public class StringMapper {
     /**
      * @param string string to map
      * @param type   to get object from
-     * @return converted object - or {@code null} if not supported
+     * @param <T>    requested type
+     * @return converted object (in object form) - or {@code null} if not supported
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
+     * @see #getObjectInstance(Class)
      */
-    protected Object mapPrimitive(String string, Class<?> type) {
+    protected <T> T mapPrimitive(String string, Class<T> type) {
+        Object result;
         if (String.class.isAssignableFrom(type))
-            return string;
-        if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))
-            return Boolean.parseBoolean(string);
-        if (byte.class.isAssignableFrom(type) || Byte.class.isAssignableFrom(type))
-            return Byte.parseByte(string);
-        if (char.class.isAssignableFrom(type) || Character.class.isAssignableFrom(type))
+            result = string;
+        else if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))
+            result = Boolean.parseBoolean(string);
+        else if (byte.class.isAssignableFrom(type) || Byte.class.isAssignableFrom(type))
+            result = Byte.parseByte(string);
+        else if (char.class.isAssignableFrom(type) || Character.class.isAssignableFrom(type))
             if (string.length() == 1)
-                return string.charAt(0);
+                result = string.charAt(0);
             else throw new IllegalArgumentException("String is no character: " + string);
-        if (short.class.isAssignableFrom(type) || Short.class.isAssignableFrom(type))
-            return Short.parseShort(string);
-        if (int.class.isAssignableFrom(type) || Integer.class.isAssignableFrom(type))
-            return Integer.parseInt(string);
-        if (long.class.isAssignableFrom(type) || Long.class.isAssignableFrom(type))
-            return Long.parseLong(string);
-        if (float.class.isAssignableFrom(type) || Float.class.isAssignableFrom(type))
-            return Float.parseFloat(string);
-        if (double.class.isAssignableFrom(type) || Double.class.isAssignableFrom(type))
-            return Double.parseDouble(string);
-        return null;
+        else if (short.class.isAssignableFrom(type) || Short.class.isAssignableFrom(type))
+            result = Short.parseShort(string);
+        else if (int.class.isAssignableFrom(type) || Integer.class.isAssignableFrom(type))
+            result = Integer.parseInt(string);
+        else if (long.class.isAssignableFrom(type) || Long.class.isAssignableFrom(type))
+            result = Long.parseLong(string);
+        else if (float.class.isAssignableFrom(type) || Float.class.isAssignableFrom(type))
+            result = Float.parseFloat(string);
+        else if (double.class.isAssignableFrom(type) || Double.class.isAssignableFrom(type))
+            result = Double.parseDouble(string);
+        else return null;
+        if (type.isPrimitive()) // checked throws ClassCastException
+            //noinspection unchecked
+            return (T) getObjectInstance(type).cast(result);
+        return type.cast(result);
     }
 
     private boolean isSupported(Class<?> expected, Class<?> type) {
@@ -106,5 +130,13 @@ public class StringMapper {
      */
     public static StringMapper getInstance() {
         return instance == null ? instance = new StringMapper() : instance;
+    }
+
+    /**
+     * @param type type to try to get primitive instance
+     * @return object instance or {@code type}
+     */
+    public static Class<?> getObjectInstance(Class<?> type) {
+        return WRAPPER_TYPE_MAP.getOrDefault(type, type);
     }
 }

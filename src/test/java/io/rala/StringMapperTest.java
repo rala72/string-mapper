@@ -129,6 +129,7 @@ class StringMapperTest {
     @MethodSource("getValidMappingArguments")
     void mapValidString(Class<?> type, String s) {
         Object map = StringMapper.getInstance().map(s, type);
+        assertEquals(StringMapper.getObjectInstance(type), map.getClass());
         assertEquals(s, String.valueOf(map));
     }
 
