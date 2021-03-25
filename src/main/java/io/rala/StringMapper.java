@@ -6,6 +6,11 @@ import java.util.function.Function;
 
 /**
  * maps a string to an object based on specified class
+ *
+ * @author rala<br>
+ * <a href="mailto:code@rala.io">code@rala.io</a><br>
+ * <a href="https://www.rala.io">www.rala.io</a>
+ * @version 1.0.1
  */
 public class StringMapper {
     private static final Map<Class<?>, Class<?>> WRAPPER_TYPE_MAP = new HashMap<>();
@@ -120,7 +125,13 @@ public class StringMapper {
         return type.cast(result);
     }
 
-    private boolean isSupported(Class<?> expected, Class<?> type) {
+    /**
+     * @param expected expected class
+     * @param type     type to check
+     * @return {@code true} if {@code expected} is assignable to {@code type}
+     * @since 1.0.1
+     */
+    protected boolean isSupported(Class<?> expected, Class<?> type) {
         Class<?> current = type;
         do {
             if (expected.equals(current)) return true;
