@@ -35,7 +35,7 @@ public class StringMapper {
         }
         if (char.class.isAssignableFrom(type) || Character.class.isAssignableFrom(type)) {
             if (getString().length() != 1)
-                throw new IllegalArgumentException("String is no character");
+                throw new IllegalArgumentException("String is no character: " + getString());
             return getString().charAt(0);
         }
         if (short.class.isAssignableFrom(type) || Short.class.isAssignableFrom(type)) {
