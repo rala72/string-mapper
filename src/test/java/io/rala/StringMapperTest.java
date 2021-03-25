@@ -135,7 +135,8 @@ class StringMapperTest {
     @ParameterizedTest
     @MethodSource("getInvalidMappingArguments")
     void mapInvalidString(Class<?> type, String s) {
-        if (type.getSimpleName().equalsIgnoreCase("Boolean") && (type.isPrimitive() || !s.equals("null"))) {
+        if (type.getSimpleName().equalsIgnoreCase("Boolean") &&
+            (type.isPrimitive() || !s.equals("null"))) {
             Object map = StringMapper.getInstance().map(s, type);
             assertEquals("false", String.valueOf(map));
         } else if (!type.isPrimitive() && s.equals("null")) {
