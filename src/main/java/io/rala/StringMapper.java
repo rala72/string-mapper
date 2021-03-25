@@ -26,6 +26,8 @@ public class StringMapper {
 
     /**
      * creates basic {@link StringMapper}
+     *
+     * @since 1.0.0
      */
     public StringMapper() {
     }
@@ -35,6 +37,7 @@ public class StringMapper {
      * @param mapper custom mapper to consider
      * @param <T>    requested type
      * @param <R>    result type (may be super class of {@code T})
+     * @since 1.0.0
      */
     public <T, R extends T> void addCustomMapper(Class<T> type, Function<String, R> mapper) {
         mapperMap.put(type, mapper);
@@ -42,6 +45,7 @@ public class StringMapper {
 
     /**
      * @param type type of mapper
+     * @since 1.0.0
      */
     public void removeCustomMapper(Class<?> type) {
         mapperMap.remove(type);
@@ -59,6 +63,7 @@ public class StringMapper {
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
      * @see #mapPrimitive(String, Class)
      * @see #getObjectInstance(Class)
+     * @since 1.0.0
      */
     public <T> T map(String string, Class<T> type) {
         if (string == null) string = "null";
@@ -84,6 +89,7 @@ public class StringMapper {
      * @return converted object (in object form) - or {@code null} if not supported
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
      * @see #getObjectInstance(Class)
+     * @since 1.0.0
      */
     protected <T> T mapPrimitive(String string, Class<T> type) {
         Object result;
@@ -127,6 +133,7 @@ public class StringMapper {
 
     /**
      * @return default instance of {@link StringMapper}
+     * @since 1.0.0
      */
     public static StringMapper getInstance() {
         return instance == null ? instance = new StringMapper() : instance;
@@ -135,6 +142,7 @@ public class StringMapper {
     /**
      * @param type type to try to get primitive instance
      * @return object instance or {@code type}
+     * @since 1.0.0
      */
     public static Class<?> getObjectInstance(Class<?> type) {
         return WRAPPER_TYPE_MAP.getOrDefault(type, type);
