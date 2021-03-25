@@ -44,7 +44,11 @@ public class StringMapper {
         if (!type.isPrimitive() && string.equals("null")) return null;
         Object o = mapPrimitive(string, type);
         if (o != null) return o;
-        Function<String, Object> mapper = mapperMap.getOrDefault(type, null);
+
+        Class<?> current = type;
+        Function<String, Object> mapper;
+        do mapper = mapperMap.getOrDefault(current, null);
+        while (mapper == null && (current = current.getSuperclass()) != null);
         if (mapper != null) return mapper.apply(string);
         throw new IllegalArgumentException(type.getName());
     }

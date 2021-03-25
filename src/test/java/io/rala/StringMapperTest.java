@@ -1,6 +1,8 @@
 package io.rala;
 
 import io.rala.testUtils.arguments.ParameterArgumentsStreamFactory;
+import io.rala.testUtils.model.ChildTestClass;
+import io.rala.testUtils.model.ParentTestClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,12 +52,44 @@ class StringMapperTest {
         stringMapper.addCustomMapper(LocalDate.class, LocalDate::parse);
 
         Object map = stringMapper.map(s, LocalDate.class);
+        assertEquals(LocalDate.class, map.getClass());
         assertEquals(LocalDate.of(2018, 11, 25), map);
 
         stringMapper.removeCustomMapper(LocalDate.class);
         assertThrows(IllegalArgumentException.class,
             () -> stringMapper.map(s, LocalDate.class)
         );
+    }
+
+    @Test
+    void mapStringToParentTestClassWithChildMapper() {
+        String s = "test";
+
+        stringMapper.addCustomMapper(ChildTestClass.class, ChildTestClass::new);
+
+        assertThrows(IllegalArgumentException.class,
+            () -> stringMapper.map(s, ParentTestClass.class)
+        );
+
+        Object map = stringMapper.map(s, ChildTestClass.class);
+        assertEquals(ChildTestClass.class, map.getClass());
+        assertEquals(new ChildTestClass(s), map);
+    }
+
+    @Test
+    void mapStringToChildTestClassWithParentMapper() {
+        String s = "test";
+
+        stringMapper.addCustomMapper(ParentTestClass.class, ParentTestClass::new);
+
+        Object map;
+        map = stringMapper.map(s, ParentTestClass.class);
+        assertEquals(ParentTestClass.class, map.getClass());
+        assertEquals(new ParentTestClass(s), map);
+
+        map = stringMapper.map(s, ChildTestClass.class);
+        assertNotEquals(ChildTestClass.class, map.getClass());
+        assertEquals(new ChildTestClass(s), map);
     }
 
     @ParameterizedTest
