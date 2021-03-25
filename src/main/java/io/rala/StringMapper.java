@@ -8,6 +8,7 @@ import java.util.function.Function;
  * maps a string to an object based on specified class
  */
 public class StringMapper {
+    private static StringMapper instance;
     private final Map<Class<?>, Function<String, Object>> mapperMap = new HashMap<>();
 
     /**
@@ -74,5 +75,12 @@ public class StringMapper {
         if (double.class.isAssignableFrom(type) || Double.class.isAssignableFrom(type))
             return Double.parseDouble(string);
         return null;
+    }
+
+    /**
+     * @return default instance of {@link StringMapper}
+     */
+    public static StringMapper getInstance() {
+        return instance == null ? instance = new StringMapper() : instance;
     }
 }

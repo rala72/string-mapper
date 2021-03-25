@@ -22,14 +22,14 @@ class StringMapperTest {
     @Test
     void mapStringToNull() {
         String s = "null";
-        Object map = stringMapper.map(s, String.class);
+        Object map = StringMapper.getInstance().map(s, String.class);
         Assertions.assertNull(map);
     }
 
     @Test
     void mapStringToString() {
         String s = "string";
-        Object map = stringMapper.map(s, String.class);
+        Object map = StringMapper.getInstance().map(s, String.class);
         Assertions.assertEquals(s, String.valueOf(map));
     }
 
@@ -38,7 +38,7 @@ class StringMapperTest {
         String s = "2018-11-25";
 
         Assertions.assertThrows(IllegalArgumentException.class,
-            () -> stringMapper.map(s, LocalDate.class)
+            () -> StringMapper.getInstance().map(s, LocalDate.class)
         );
     }
 
@@ -60,7 +60,7 @@ class StringMapperTest {
     @ParameterizedTest
     @MethodSource("getValidMappingArguments")
     void mapValidString(Class<?> type, String s) {
-        Object map = stringMapper.map(s, type);
+        Object map = StringMapper.getInstance().map(s, type);
         Assertions.assertEquals(s, String.valueOf(map));
     }
 
@@ -68,19 +68,19 @@ class StringMapperTest {
     @MethodSource("getInvalidMappingArguments")
     void mapInvalidString(Class<?> type, String s) {
         if (type.getSimpleName().equalsIgnoreCase("Boolean") && (type.isPrimitive() || !s.equals("null"))) {
-            Object map = stringMapper.map(s, type);
+            Object map = StringMapper.getInstance().map(s, type);
             Assertions.assertEquals("false", String.valueOf(map));
         } else if (!type.isPrimitive() && s.equals("null")) {
-            Object map = stringMapper.map(s, type);
+            Object map = StringMapper.getInstance().map(s, type);
             Assertions.assertEquals(s, String.valueOf(map));
         } else {
             if (type.isAssignableFrom(Number.class)) {
                 Assertions.assertThrows(NumberFormatException.class,
-                    () -> stringMapper.map(s, type)
+                    () -> StringMapper.getInstance().map(s, type)
                 );
             } else {
                 Assertions.assertThrows(IllegalArgumentException.class,
-                    () -> stringMapper.map(s, type)
+                    () -> StringMapper.getInstance().map(s, type)
                 );
             }
         }
