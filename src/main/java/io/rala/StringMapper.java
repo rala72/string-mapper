@@ -81,7 +81,7 @@ public class StringMapper {
             for (Class<?> aClass : mapperMap.keySet()) {
                 if (!isSupported(type, aClass)) continue;
                 mapper = mapperMap.getOrDefault(aClass, null);
-                break;
+                if (mapper != null) break;
             }
         if (mapper != null) return type.cast(mapper.apply(string));
         throw new IllegalArgumentException(type.getName());
