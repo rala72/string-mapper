@@ -1,5 +1,9 @@
 package io.rala;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -44,7 +48,9 @@ public class StringMapper {
      * @param <R>    result type (may be super class of {@code T})
      * @since 1.0.0
      */
-    public <T, R extends T> void addCustomMapper(Class<T> type, Function<String, R> mapper) {
+    public <T, R extends T> void addCustomMapper(
+        @NotNull Class<T> type, @Nullable Function<String, R> mapper
+    ) {
         mapperMap.put(type, mapper);
     }
 
@@ -52,7 +58,7 @@ public class StringMapper {
      * @param type type of mapper
      * @since 1.0.0
      */
-    public void removeCustomMapper(Class<?> type) {
+    public void removeCustomMapper(@NotNull Class<?> type) {
         mapperMap.remove(type);
     }
 
@@ -63,14 +69,17 @@ public class StringMapper {
      * @param string string to map
      * @param type   to get object from
      * @param <T>    requested type
-     * @return converted object - always in object form
+     * @return converted object - always in object form or
+     * {@code null} if string is either {@code null} or {@code "null"} and
+     * {@code type} is not primitive
      * @throws IllegalArgumentException if class not supported
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
      * @see #mapPrimitive(String, Class)
      * @see #getObjectInstance(Class)
      * @since 1.0.0
      */
-    public <T> T map(String string, Class<T> type) {
+    @Nullable
+    public <T> T map(@Nullable String string, @NotNull Class<T> type) {
         if (string == null) string = "null";
         if (!type.isPrimitive() && string.equals("null")) return null;
         T t = mapPrimitive(string, type);
@@ -96,7 +105,8 @@ public class StringMapper {
      * @see #getObjectInstance(Class)
      * @since 1.0.0
      */
-    protected <T> T mapPrimitive(String string, Class<T> type) {
+    @Nullable
+    protected <T> T mapPrimitive(@NotNull String string, @NotNull Class<T> type) {
         Object result;
         if (String.class.isAssignableFrom(type))
             result = string;
@@ -131,7 +141,7 @@ public class StringMapper {
      * @return {@code true} if {@code expected} is assignable to {@code type}
      * @since 1.0.1
      */
-    protected boolean isSupported(Class<?> expected, Class<?> type) {
+    protected boolean isSupported(@NotNull Class<?> expected, @NotNull Class<?> type) {
         Class<?> current = type;
         do {
             if (expected.equals(current)) return true;
@@ -146,6 +156,7 @@ public class StringMapper {
      * @return default instance of {@link StringMapper}
      * @since 1.0.0
      */
+    @NotNull
     public static StringMapper getInstance() {
         return instance == null ? instance = new StringMapper() : instance;
     }
@@ -155,7 +166,9 @@ public class StringMapper {
      * @return object instance or {@code type}
      * @since 1.0.0
      */
-    public static Class<?> getObjectInstance(Class<?> type) {
+    @Nullable
+    @Contract("null -> null; !null -> !null")
+    public static Class<?> getObjectInstance(@Nullable Class<?> type) {
         return WRAPPER_TYPE_MAP.getOrDefault(type, type);
     }
 }

@@ -56,6 +56,7 @@ class StringMapperTest {
         stringMapper.addCustomMapper(LocalDate.class, LocalDate::parse);
 
         Object map = stringMapper.map(s, LocalDate.class);
+        assertNotNull(map);
         assertEquals(LocalDate.class, map.getClass());
         assertEquals(LocalDate.of(2018, 11, 25), map);
 
@@ -77,10 +78,12 @@ class StringMapperTest {
 
         Object map;
         map = stringMapper.map(s, ParentTestClass.class);
+        assertNotNull(map);
         assertNotEquals(ParentTestClass.class, map.getClass());
         assertEquals(new ParentTestClass(s), map);
 
         map = stringMapper.map(s, ChildTestClass.class);
+        assertNotNull(map);
         assertEquals(ChildTestClass.class, map.getClass());
         assertEquals(new ChildTestClass(s), map);
     }
@@ -92,6 +95,7 @@ class StringMapperTest {
         stringMapper.addCustomMapper(ParentTestClass.class, ParentTestClass::new);
 
         Object map = stringMapper.map(s, ParentTestClass.class);
+        assertNotNull(map);
         assertEquals(ParentTestClass.class, map.getClass());
         assertEquals(new ParentTestClass(s), map);
 
@@ -108,10 +112,12 @@ class StringMapperTest {
 
         Object map;
         map = stringMapper.map(s, TestInterface.class);
+        assertNotNull(map);
         assertNotEquals(TestInterface.class, map.getClass());
         assertEquals(new InterfaceTestClass(s), map);
 
         map = stringMapper.map(s, InterfaceTestClass.class);
+        assertNotNull(map);
         assertEquals(InterfaceTestClass.class, map.getClass());
         assertEquals(new InterfaceTestClass(s), map);
     }
@@ -123,6 +129,7 @@ class StringMapperTest {
         stringMapper.addCustomMapper(TestInterface.class, InterfaceTestClass::new);
 
         Object map = stringMapper.map(s, TestInterface.class);
+        assertNotNull(map);
         assertNotEquals(TestInterface.class, map.getClass());
         assertEquals(new InterfaceTestClass(s), map);
 
@@ -137,6 +144,7 @@ class StringMapperTest {
     @MethodSource("getValidMappingArguments")
     void mapValidString(Class<?> type, String s) {
         Object map = StringMapper.getInstance().map(s, type);
+        assertNotNull(map);
         assertEquals(StringMapper.getObjectInstance(type), map.getClass());
         assertEquals(s, String.valueOf(map));
     }
