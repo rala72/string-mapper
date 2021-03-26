@@ -45,7 +45,7 @@ public class StringMapper {
      * @param type   type of mapper
      * @param mapper custom mapper to consider
      * @param <T>    requested type
-     * @param <R>    result type (may be super class of {@code T})
+     * @param <R>    result type (may be subclass of {@code T})
      * @since 1.0.0
      */
     public <T, R extends T> void addCustomMapper(
