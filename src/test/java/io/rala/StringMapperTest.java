@@ -50,6 +50,17 @@ class StringMapperTest {
     }
 
     @Test
+    void mapStringToLocalDateWithNullMapper() {
+        String s = "2018-11-25";
+
+        stringMapper.addCustomMapper(LocalDate.class, null);
+
+        assertThrows(IllegalArgumentException.class,
+            () -> stringMapper.map(s, LocalDate.class)
+        );
+    }
+
+    @Test
     void mapStringToLocalDateWithMapper() {
         String s = "2018-11-25";
 
