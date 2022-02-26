@@ -14,7 +14,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class StringMapperTest {
     private StringMapper stringMapper;
@@ -30,23 +31,22 @@ class StringMapperTest {
     void mapStringToNull() {
         String s = "null";
         Object map = StringMapper.getInstance().map(s, String.class);
-        assertNull(map);
+        assertThat(map).isNull();
     }
 
     @Test
     void mapStringToString() {
         String s = "string";
         Object map = StringMapper.getInstance().map(s, String.class);
-        assertEquals(s, String.valueOf(map));
+        assertThat(String.valueOf(map)).isEqualTo(s);
     }
 
     @Test
     void mapStringToLocalDateWithoutMapper() {
         String s = "2018-11-25";
 
-        assertThrows(IllegalArgumentException.class,
-            () -> StringMapper.getInstance().map(s, LocalDate.class)
-        );
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> StringMapper.getInstance().map(s, LocalDate.class));
     }
 
     @Test
@@ -55,9 +55,8 @@ class StringMapperTest {
 
         stringMapper.addCustomMapper(LocalDate.class, null);
 
-        assertThrows(IllegalArgumentException.class,
-            () -> stringMapper.map(s, LocalDate.class)
-        );
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> stringMapper.map(s, LocalDate.class));
     }
 
     @Test
@@ -67,14 +66,13 @@ class StringMapperTest {
         stringMapper.addCustomMapper(LocalDate.class, LocalDate::parse);
 
         Object map = stringMapper.map(s, LocalDate.class);
-        assertNotNull(map);
-        assertEquals(LocalDate.class, map.getClass());
-        assertEquals(LocalDate.of(2018, 11, 25), map);
+        assertThat(map).isNotNull();
+        assertThat(map.getClass()).isEqualTo(LocalDate.class);
+        assertThat(map).isEqualTo(LocalDate.of(2018, 11, 25));
 
         stringMapper.removeCustomMapper(LocalDate.class);
-        assertThrows(IllegalArgumentException.class,
-            () -> stringMapper.map(s, LocalDate.class)
-        );
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> stringMapper.map(s, LocalDate.class));
     }
 
     // endregion
@@ -89,14 +87,14 @@ class StringMapperTest {
 
         Object map;
         map = stringMapper.map(s, ParentTestClass.class);
-        assertNotNull(map);
-        assertNotEquals(ParentTestClass.class, map.getClass());
-        assertEquals(new ParentTestClass(s), map);
+        assertThat(map).isNotNull();
+        assertThat(map.getClass()).isNotEqualTo(ParentTestClass.class);
+        assertThat(map).isEqualTo(new ParentTestClass(s));
 
         map = stringMapper.map(s, ChildTestClass.class);
-        assertNotNull(map);
-        assertEquals(ChildTestClass.class, map.getClass());
-        assertEquals(new ChildTestClass(s), map);
+        assertThat(map).isNotNull();
+        assertThat(map.getClass()).isEqualTo(ChildTestClass.class);
+        assertThat(map).isEqualTo(new ChildTestClass(s));
     }
 
     @Test
@@ -106,13 +104,12 @@ class StringMapperTest {
         stringMapper.addCustomMapper(ParentTestClass.class, ParentTestClass::new);
 
         Object map = stringMapper.map(s, ParentTestClass.class);
-        assertNotNull(map);
-        assertEquals(ParentTestClass.class, map.getClass());
-        assertEquals(new ParentTestClass(s), map);
+        assertThat(map).isNotNull();
+        assertThat(map.getClass()).isEqualTo(ParentTestClass.class);
+        assertThat(map).isEqualTo(new ParentTestClass(s));
 
-        assertThrows(IllegalArgumentException.class,
-            () -> stringMapper.map(s, ChildTestClass.class)
-        );
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> stringMapper.map(s, ChildTestClass.class));
     }
 
     @Test
@@ -123,14 +120,14 @@ class StringMapperTest {
 
         Object map;
         map = stringMapper.map(s, TestInterface.class);
-        assertNotNull(map);
-        assertNotEquals(TestInterface.class, map.getClass());
-        assertEquals(new InterfaceTestClass(s), map);
+        assertThat(map).isNotNull();
+        assertThat(map.getClass()).isNotEqualTo(TestInterface.class);
+        assertThat(map).isEqualTo(new InterfaceTestClass(s));
 
         map = stringMapper.map(s, InterfaceTestClass.class);
-        assertNotNull(map);
-        assertEquals(InterfaceTestClass.class, map.getClass());
-        assertEquals(new InterfaceTestClass(s), map);
+        assertThat(map).isNotNull();
+        assertThat(map.getClass()).isEqualTo(InterfaceTestClass.class);
+        assertThat(map).isEqualTo(new InterfaceTestClass(s));
     }
 
     @Test
@@ -140,13 +137,12 @@ class StringMapperTest {
         stringMapper.addCustomMapper(TestInterface.class, InterfaceTestClass::new);
 
         Object map = stringMapper.map(s, TestInterface.class);
-        assertNotNull(map);
-        assertNotEquals(TestInterface.class, map.getClass());
-        assertEquals(new InterfaceTestClass(s), map);
+        assertThat(map).isNotNull();
+        assertThat(map.getClass()).isNotEqualTo(TestInterface.class);
+        assertThat(map).isEqualTo(new InterfaceTestClass(s));
 
-        assertThrows(IllegalArgumentException.class,
-            () -> stringMapper.map(s, InterfaceTestClass.class)
-        );
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> stringMapper.map(s, InterfaceTestClass.class));
     }
 
     // endregion
@@ -155,9 +151,9 @@ class StringMapperTest {
     @MethodSource("getValidMappingArguments")
     void mapValidString(Class<?> type, String s) {
         Object map = StringMapper.getInstance().map(s, type);
-        assertNotNull(map);
-        assertEquals(StringMapper.getObjectInstance(type), map.getClass());
-        assertEquals(s, String.valueOf(map));
+        assertThat(map).isNotNull();
+        assertThat(map.getClass()).isEqualTo(StringMapper.getObjectInstance(type));
+        assertThat(String.valueOf(map)).isEqualTo(s);
     }
 
     @ParameterizedTest
@@ -166,19 +162,17 @@ class StringMapperTest {
         if (type.getSimpleName().equalsIgnoreCase("Boolean") &&
             (type.isPrimitive() || !s.equals("null"))) {
             Object map = StringMapper.getInstance().map(s, type);
-            assertEquals("false", String.valueOf(map));
+            assertThat(String.valueOf(map)).isEqualTo("false");
         } else if (!type.isPrimitive() && s.equals("null")) {
             Object map = StringMapper.getInstance().map(s, type);
-            assertEquals(s, String.valueOf(map));
+            assertThat(String.valueOf(map)).isEqualTo(s);
         } else {
             if (type.isAssignableFrom(Number.class)) {
-                assertThrows(NumberFormatException.class,
-                    () -> StringMapper.getInstance().map(s, type)
-                );
+                assertThatExceptionOfType(NumberFormatException.class)
+                    .isThrownBy(() -> StringMapper.getInstance().map(s, type));
             } else {
-                assertThrows(IllegalArgumentException.class,
-                    () -> StringMapper.getInstance().map(s, type)
-                );
+                assertThatExceptionOfType(IllegalArgumentException.class)
+                    .isThrownBy(() -> StringMapper.getInstance().map(s, type));
             }
         }
     }
