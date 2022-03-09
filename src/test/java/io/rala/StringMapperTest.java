@@ -59,6 +59,22 @@ class StringMapperTest {
     }
 
     @Test
+    void mapStringToLocalDateWithDefaultMapper() {
+        String s = "2018-11-25";
+
+        stringMapper.addTimeMapper();
+
+        Object map = stringMapper.map(s, LocalDate.class);
+        assertThat(map).isNotNull();
+        assertThat(map.getClass()).isEqualTo(LocalDate.class);
+        assertThat(map).isEqualTo(LocalDate.of(2018, 11, 25));
+
+        stringMapper.removeTimeMapper();
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> stringMapper.map(s, LocalDate.class));
+    }
+
+    @Test
     void mapStringToLocalDateWithoutMapper() {
         String s = "2018-11-25";
 
@@ -77,7 +93,7 @@ class StringMapperTest {
     }
 
     @Test
-    void mapStringToLocalDateWithMapper() {
+    void mapStringToLocalDateWithCustomMapper() {
         String s = "2018-11-25";
 
         stringMapper.addCustomMapper(LocalDate.class, LocalDate::parse);

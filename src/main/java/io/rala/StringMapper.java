@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -58,6 +59,60 @@ public class StringMapper {
      */
     public void removeEnumMapper() {
         mapEnumEnabled = false;
+    }
+
+    /**
+     * enables time mapping for
+     * {@link Duration}, {@link Instant}, {@link LocalDate},
+     * {@link LocalDateTime}, {@link LocalTime}, {@link MonthDay},
+     * {@link OffsetDateTime}, {@link OffsetTime}, {@link Period},
+     * {@link Year}, {@link YearMonth}, {@link ZonedDateTime},
+     * {@link ZoneId}, {@link ZoneOffset}
+     *
+     * @since 1.0.3
+     */
+    public void addTimeMapper() {
+        addCustomMapper(Duration.class, Duration::parse);
+        addCustomMapper(Instant.class, Instant::parse);
+        addCustomMapper(LocalDate.class, LocalDate::parse);
+        addCustomMapper(LocalDateTime.class, LocalDateTime::parse);
+        addCustomMapper(LocalTime.class, LocalTime::parse);
+        addCustomMapper(MonthDay.class, MonthDay::parse);
+        addCustomMapper(OffsetDateTime.class, OffsetDateTime::parse);
+        addCustomMapper(OffsetTime.class, OffsetTime::parse);
+        addCustomMapper(Period.class, Period::parse);
+        addCustomMapper(Year.class, Year::parse);
+        addCustomMapper(YearMonth.class, YearMonth::parse);
+        addCustomMapper(ZonedDateTime.class, ZonedDateTime::parse);
+        addCustomMapper(ZoneId.class, ZoneId::of);
+        addCustomMapper(ZoneOffset.class, ZoneOffset::of);
+    }
+
+    /**
+     * disables time mapping for
+     * {@link Duration}, {@link Instant}, {@link LocalDate},
+     * {@link LocalDateTime}, {@link LocalTime}, {@link MonthDay},
+     * {@link OffsetDateTime}, {@link OffsetTime}, {@link Period},
+     * {@link Year}, {@link YearMonth}, {@link ZonedDateTime},
+     * {@link ZoneId}, {@link ZoneOffset}
+     *
+     * @since 1.0.3
+     */
+    public void removeTimeMapper() {
+        removeCustomMapper(Duration.class);
+        removeCustomMapper(Instant.class);
+        removeCustomMapper(LocalDate.class);
+        removeCustomMapper(LocalDateTime.class);
+        removeCustomMapper(LocalTime.class);
+        removeCustomMapper(MonthDay.class);
+        removeCustomMapper(OffsetDateTime.class);
+        removeCustomMapper(OffsetTime.class);
+        removeCustomMapper(Period.class);
+        removeCustomMapper(Year.class);
+        removeCustomMapper(YearMonth.class);
+        removeCustomMapper(ZonedDateTime.class);
+        removeCustomMapper(ZoneId.class);
+        removeCustomMapper(ZoneOffset.class);
     }
 
     /**
