@@ -263,7 +263,7 @@ public class StringMapper {
     }
 
     /**
-     * @param type type to try to get primitive instance
+     * @param type type to try to get primitive object instance
      * @return object instance or {@code type}
      * @since 1.0.0
      */
