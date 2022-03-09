@@ -4,6 +4,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +61,26 @@ public class StringMapper {
      */
     public void removeEnumMapper() {
         mapEnumEnabled = false;
+    }
+
+    /**
+     * enables math mapping for {@link BigInteger}, {@link BigDecimal}
+     *
+     * @since 1.0.3
+     */
+    public void addMathMapper() {
+        addCustomMapper(BigInteger.class, BigInteger::new);
+        addCustomMapper(BigDecimal.class, BigDecimal::new);
+    }
+
+    /**
+     * disables math mapping for {@link BigInteger}, {@link BigDecimal}
+     *
+     * @since 1.0.3
+     */
+    public void removeMathMapper() {
+        removeCustomMapper(BigInteger.class);
+        removeCustomMapper(BigDecimal.class);
     }
 
     /**
