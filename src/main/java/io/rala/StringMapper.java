@@ -110,20 +110,20 @@ public class StringMapper {
         Object result;
         if (String.class.isAssignableFrom(type))
             result = string;
-        else if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))
-            result = Boolean.parseBoolean(string);
-        else if (byte.class.isAssignableFrom(type) || Byte.class.isAssignableFrom(type))
-            result = Byte.parseByte(string);
         else if (char.class.isAssignableFrom(type) || Character.class.isAssignableFrom(type))
             if (string.length() == 1)
                 result = string.charAt(0);
             else throw new IllegalArgumentException("String is no character: " + string);
+        else if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))
+            result = Boolean.parseBoolean(string);
+        else if (byte.class.isAssignableFrom(type) || Byte.class.isAssignableFrom(type))
+            result = Byte.decode(string);
         else if (short.class.isAssignableFrom(type) || Short.class.isAssignableFrom(type))
-            result = Short.parseShort(string);
+            result = Short.decode(string);
         else if (int.class.isAssignableFrom(type) || Integer.class.isAssignableFrom(type))
-            result = Integer.parseInt(string);
+            result = Integer.decode(string);
         else if (long.class.isAssignableFrom(type) || Long.class.isAssignableFrom(type))
-            result = Long.parseLong(string);
+            result = Long.decode(string);
         else if (float.class.isAssignableFrom(type) || Float.class.isAssignableFrom(type))
             result = Float.parseFloat(string);
         else if (double.class.isAssignableFrom(type) || Double.class.isAssignableFrom(type))
