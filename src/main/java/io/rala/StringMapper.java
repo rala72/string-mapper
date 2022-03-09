@@ -17,7 +17,7 @@ import java.util.function.Function;
  * @author rala<br>
  * <a href="mailto:code@rala.io">code@rala.io</a><br>
  * <a href="https://www.rala.io">www.rala.io</a>
- * @version 1.0.2
+ * @version 1.0.3
  */
 public class StringMapper {
     private static final Map<Class<?>, Class<?>> WRAPPER_TYPE_MAP = new HashMap<>();
