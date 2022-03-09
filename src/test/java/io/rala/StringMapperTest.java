@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +40,22 @@ class StringMapperTest {
         String s = "string";
         Object map = StringMapper.getInstance().map(s, String.class);
         assertThat(String.valueOf(map)).isEqualTo(s);
+    }
+
+    @Test
+    void mapStringToEnum() {
+        String s = "APRIL";
+
+        stringMapper.addEnumMapper();
+
+        Object map = stringMapper.map(s, Month.class);
+        assertThat(map).isNotNull();
+        assertThat(map.getClass()).isEqualTo(Month.class);
+        assertThat(map).isEqualTo(Month.APRIL);
+
+        stringMapper.removeEnumMapper();
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> stringMapper.map(s, Month.class));
     }
 
     @Test

@@ -20,6 +20,7 @@ public class StringMapper {
     private static final Map<Class<?>, Class<?>> WRAPPER_TYPE_MAP = new HashMap<>();
     private static StringMapper instance;
     private final Map<Class<?>, Function<String, ?>> mapperMap = new HashMap<>();
+    private boolean mapEnumEnabled = false;
 
     static {
         WRAPPER_TYPE_MAP.put(boolean.class, Boolean.class);
@@ -39,6 +40,24 @@ public class StringMapper {
      * @since 1.0.0
      */
     public StringMapper() {
+    }
+
+    /**
+     * enables enum mapping
+     *
+     * @since 1.0.3
+     */
+    public void addEnumMapper() {
+        mapEnumEnabled = true;
+    }
+
+    /**
+     * disables enum mapping
+     *
+     * @since 1.0.3
+     */
+    public void removeEnumMapper() {
+        mapEnumEnabled = false;
     }
 
     /**
@@ -74,6 +93,7 @@ public class StringMapper {
      * {@code type} is not primitive
      * @throws IllegalArgumentException if class not supported
      * @throws IllegalArgumentException if target class is {@code char} and length is not {@code 1}
+     * @throws IllegalArgumentException if target class is {@code enum} and field is not found
      * @see #mapPrimitive(String, Class)
      * @see #getObjectInstance(Class)
      * @since 1.0.0
@@ -84,6 +104,10 @@ public class StringMapper {
         if (!type.isPrimitive() && string.equals("null")) return null;
         T t = mapPrimitive(string, type);
         if (t != null) return t;
+
+        if (mapEnumEnabled && type.isEnum())
+            //noinspection unchecked,rawtypes
+            return (T) Enum.valueOf((Class) type, string);
 
         Function<String, ?> mapper = mapperMap.getOrDefault(type, null);
         if (mapper == null)
