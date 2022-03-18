@@ -47,14 +47,18 @@ class StringMapperTest {
     void mapStringToEnum() {
         String s = "APRIL";
 
+        assertThat(stringMapper.isMapEnumEnabled()).isFalse();
+
         stringMapper.addEnumMapper();
 
         Object map = stringMapper.map(s, Month.class);
+        assertThat(stringMapper.isMapEnumEnabled()).isTrue();
         assertThat(map).isNotNull();
         assertThat(map.getClass()).isEqualTo(Month.class);
         assertThat(map).isEqualTo(Month.APRIL);
 
         stringMapper.removeEnumMapper();
+        assertThat(stringMapper.isMapEnumEnabled()).isFalse();
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> stringMapper.map(s, Month.class));
     }

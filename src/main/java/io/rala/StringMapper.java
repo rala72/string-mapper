@@ -183,7 +183,7 @@ public class StringMapper {
         T t = mapPrimitive(string, type);
         if (t != null) return t;
 
-        if (mapEnumEnabled && type.isEnum())
+        if (isMapEnumEnabled() && type.isEnum())
             //noinspection unchecked,rawtypes
             return (T) Enum.valueOf((Class) type, string);
 
@@ -241,6 +241,7 @@ public class StringMapper {
      * @param expected expected class
      * @param type     type to check
      * @return {@code true} if {@code expected} is assignable to {@code type}
+     * @see #isMapEnumEnabled()
      * @since 1.0.1
      */
     protected boolean isSupported(@NotNull Class<?> expected, @NotNull Class<?> type) {
@@ -252,6 +253,15 @@ public class StringMapper {
                     return true;
         } while ((current = current.getSuperclass()) != null);
         return false;
+    }
+
+    /**
+     * @return {@code true} if enum mapping is enabled
+     * @see #isSupported(Class, Class)
+     * @since 1.0.4
+     */
+    protected boolean isMapEnumEnabled() {
+        return mapEnumEnabled;
     }
 
     /**
