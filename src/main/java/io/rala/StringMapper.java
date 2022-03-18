@@ -43,6 +43,7 @@ public class StringMapper {
      * @since 1.0.0
      */
     public StringMapper() {
+        // nothing to do here
     }
 
     /**
@@ -211,11 +212,11 @@ public class StringMapper {
         Object result;
         if (String.class.isAssignableFrom(type))
             result = string;
-        else if (char.class.isAssignableFrom(type) || Character.class.isAssignableFrom(type))
+        else if (char.class.isAssignableFrom(type) || Character.class.isAssignableFrom(type)) {
             if (string.length() == 1)
                 result = string.charAt(0);
             else throw new IllegalArgumentException("String is no character: " + string);
-        else if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))
+        } else if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type))
             result = Boolean.parseBoolean(string);
         else if (byte.class.isAssignableFrom(type) || Byte.class.isAssignableFrom(type))
             result = Byte.decode(string);
