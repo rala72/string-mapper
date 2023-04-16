@@ -1,0 +1,44 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: cimg/openjdk:11.0
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: mvn install -Dmaven.javadoc.skip=true -DskipTests -Dgpg.skip -B -V
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  test:
+    docker:
+      - image: cimg/openjdk:11.0
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Test
+          command: mvn test
+  report:
+    docker:
+      - image: cimg/openjdk:11.0
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Report
+          command: mvn clean test jacoco:report coveralls:report -DrepoToken=$repoToken
+
+workflows:
+  verify:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - report:
+          requires:
+            - build
