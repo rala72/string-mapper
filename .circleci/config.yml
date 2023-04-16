@@ -6,39 +6,55 @@ jobs:
       - image: cimg/openjdk:11.0
     steps:
       - checkout
+      - restore_cache:
+          key: &mvn-cache mvn-cache-v1-{{ .Branch }}-{{ checksum "pom.xml" }}-{{ checksum ".circleci/config.yml" }}
       - run:
           name: Build
-          command: mvn install -Dmaven.javadoc.skip=true -DskipTests -Dgpg.skip -B -V
+          command: mvn dependency:go-offline test-compile -B -V
       - persist_to_workspace:
           root: .
           paths:
             - .
+      - save_cache:
+          key: *mvn-cache
+          paths:
+            - ~/.m2
   test:
     docker:
       - image: cimg/openjdk:11.0
     steps:
       - attach_workspace:
           at: .
+      - restore_cache:
+          key: *mvn-cache
       - run:
           name: Test
-          command: mvn test
-  report:
-    docker:
-      - image: cimg/openjdk:11.0
-    steps:
-      - attach_workspace:
-          at: .
+          command: mvn test jacoco:report coveralls:report -DrepoToken=$repoToken
       - run:
-          name: Report
-          command: mvn clean test jacoco:report coveralls:report -DrepoToken=$repoToken
+          name: Extracting Test Results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit \;
+            tar -cvzf junit.tar ~/test-results/junit
+          when: always
+      - run:
+          name: Extracting Coverage Results
+          command: |
+            mkdir -p ~/test-results/jacoco/
+            cp -a target/site/jacoco ~/test-results
+            tar -cvzf jacoco.tar ~/test-results/jacoco
+          when: always
+      - store_test_results:
+          path: ~/test-results/junit
+      - store_artifacts:
+          path: junit.tar
+      - store_artifacts:
+          path: jacoco.tar
 
 workflows:
   verify:
     jobs:
       - build
       - test:
-          requires:
-            - build
-      - report:
           requires:
             - build
