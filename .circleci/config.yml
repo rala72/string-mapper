@@ -4,6 +4,7 @@ jobs:
   build:
     docker:
       - image: cimg/openjdk:11.0
+    resource_class: medium
     steps:
       - checkout
       - restore_cache:
@@ -22,6 +23,7 @@ jobs:
   test:
     docker:
       - image: cimg/openjdk:11.0
+    resource_class: medium+
     steps:
       - attach_workspace:
           at: .
@@ -35,21 +37,21 @@ jobs:
           command: |
             mkdir -p ~/test-results/junit/
             find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit \;
-            tar -cvzf junit.tar ~/test-results/junit
+            tar -cvzf junit.tar.gz -C ~/test-results junit
           when: always
       - run:
           name: Extracting Coverage Results
           command: |
             mkdir -p ~/test-results/jacoco/
             cp -a target/site/jacoco ~/test-results
-            tar -cvzf jacoco.tar ~/test-results/jacoco
+            tar -cvzf jacoco.tar.gz -C ~/test-results jacoco
           when: always
       - store_test_results:
           path: ~/test-results/junit
       - store_artifacts:
-          path: junit.tar
+          path: junit.tar.gz
       - store_artifacts:
-          path: jacoco.tar
+          path: jacoco.tar.gz
 
 workflows:
   verify:
