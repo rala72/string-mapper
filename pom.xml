@@ -21,16 +21,16 @@
         <assertj.version>3.27.3</assertj.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <jetbrains-annotations.version>26.0.2</jetbrains-annotations.version>
-        <junit.version>5.12.0</junit.version>
+        <junit.version>5.13.1</junit.version>
 
         <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
         <deploy-plugin.version>3.1.4</deploy-plugin.version>
         <gpg-plugin.version>3.2.7</gpg-plugin.version>
-        <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
+        <jacoco-plugin.version>0.8.13</jacoco-plugin.version>
         <jar-plugin.version>3.4.2</jar-plugin.version>
         <javadoc-plugin.version>3.11.2</javadoc-plugin.version>
         <source-plugin.version>3.3.1</source-plugin.version>
-        <surefire-plugin.version>3.5.2</surefire-plugin.version>
+        <surefire-plugin.version>3.5.3</surefire-plugin.version>
         <version-plugin.version>2.18.0</version-plugin.version>
     </properties>
 
